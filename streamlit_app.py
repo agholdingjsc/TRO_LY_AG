@@ -4,8 +4,15 @@ import os
 
 # Hàm đọc nội dung từ file văn bản
 def rfile(name_file):
-    with open(name_file, "r", encoding="utf-8") as file:
-        return file.read()
+    try:
+        with open(name_file, "r", encoding="utf-8") as file:
+            return file.read()
+    except FileNotFoundError:
+        st.error(f"Không tìm thấy file: {name_file}")
+        return ""
+    except Exception as e:
+        st.error(f"Lỗi khi đọc file {name_file}: {str(e)}")
+        return ""
 
 # Hiển thị logo (nếu có)
 try:
@@ -24,6 +31,11 @@ st.markdown(
 
 # Lấy OpenAI API key từ st.secrets
 openai_api_key = st.secrets.get("OPENAI_API_KEY")
+
+# Đọc tên model từ file
+model_name = rfile("module_chatgpt.txt").strip()
+if not model_name:
+    model_name = "gpt-4o-mini"  # fallback model
 
 # Khởi tạo OpenAI client
 client = OpenAI(api_key=openai_api_key)
@@ -77,7 +89,7 @@ if prompt := st.chat_input("Sếp nhập nội dung cần trao đổi ở đây 
     # Tạo phản hồi từ API OpenAI
     response = ""
     stream = client.chat.completions.create(
-        model=rfile("module_chatgpt.txt").strip(),
+        model=model_name,
         messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
         stream=True,
     )
