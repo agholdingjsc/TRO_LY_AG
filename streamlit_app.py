@@ -29,9 +29,13 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Lấy OpenAI API key từ st.secrets
-openai_api_key = st.secrets.get("OPENAI_API_KEY")
+ Lấy key từ Heroku Config Vars
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
+if not openai_api_key:
+    st.error("⚠️ OPENAI_API_KEY chưa được cấu hình trong Heroku Config Vars")
+else:
+    client = OpenAI(api_key=openai_api_key)
 # Đọc tên model từ file
 model_name = rfile("module_chatgpt.txt").strip()
 if not model_name:
