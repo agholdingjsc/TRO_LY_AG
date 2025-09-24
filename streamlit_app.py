@@ -29,7 +29,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
- Lấy key từ Heroku Config Vars
+# Lấy key từ Heroku Config Vars
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 if not openai_api_key:
